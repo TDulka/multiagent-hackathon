@@ -15,9 +15,9 @@ def run_agent(strategy):
 def main(agents_n):
     # Arguments to pass to the script
     strategies = [
-        'Speak like a gen-z', 
-        'Be very bold', 
-        'Pretend you are a wizard',
+        'You always want to get more in return.',
+        'You never share your secrets',
+        'You never share your secrets',
         'Extract maximum value by moving fast and breaking things',
         'Be very sneaky. Try to hide your strategy',
         'First mover wins, second mover loses, you cannot hesitate',

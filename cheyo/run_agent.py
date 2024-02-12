@@ -26,7 +26,7 @@ for i in range(1000):
     time.sleep(5)
 
 #%%
-for i in range(20):
+for i in range(30):
     data, finished = agent.do_action()
     print(f'Finished: {finished}. AGENT {agent.id} does:\n', data)
     time.sleep(4 + random.randint(0, 4))

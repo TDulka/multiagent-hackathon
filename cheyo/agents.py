@@ -86,7 +86,7 @@ Remember, your priority is to maximize your chances of winning the $20. Every in
 
     def check_started(self):
         game_started, secret, agents = self.client.check_started(self.id)
-        self.secrets.append(secret)
+        self.secrets = secret
         self.game_started = game_started
         self.others = [agent for agent in agents if agent != self.id]
 
@@ -96,7 +96,7 @@ Remember, your priority is to maximize your chances of winning the $20. Every in
     def get_chat_history(self):
         self.messages = self.client.get_messages(self.id, self.others)
         if self.messages is None:
-            raise Exception("Game ended")
+            return None
 
         history = "Public chat:\n"
         for msg in self.messages['all']:
@@ -115,7 +115,6 @@ Remember, your priority is to maximize your chances of winning the $20. Every in
         return history
 
     def get_system_prompt(self):
-        chat = self.get_chat_history()
         secrets = ", ".join(self.secrets)
         agents = ", ".join(self.others)
 
@@ -126,19 +125,18 @@ Remember, your priority is to maximize your chances of winning the $20. Every in
 
     def get_prompt(self):
         chat = self.get_chat_history()
+        if chat is None:
+            return None
         prompt = f"{chat}\nChoose a single action."
         return prompt
 
     def do_action(self):
-        result = None
+        prompt = self.get_prompt()
+        if prompt is None:
+            return None, True
 
-        try:
-            result = gpt4(self.get_system_prompt(), self.get_prompt())
-        except Exception as e:
-            if e.args[0] == "Game ended":
-                return None, True
-            else:
-                raise e        
+        result = gpt4(self.get_system_prompt(), self.get_prompt())
+        
         data = json.loads(result)
 
         finished = False
@@ -149,6 +147,7 @@ Remember, your priority is to maximize your chances of winning the $20. Every in
             guess_correct = self.client.guess(self.id, data['content'])
             if guess_correct:
                 finished = True
+                print(f"WOOOOOOOOOOOAAAAAAHHHH! Agent {self.id} guessed correctly")
             else:
                 self.guesses.append(data['content'])
 
